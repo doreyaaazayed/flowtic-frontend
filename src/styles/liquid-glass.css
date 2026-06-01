@@ -1,0 +1,2526 @@
+/**
+ * FlowTic — Liquid Glass + 3D Cinematic Design System
+ *
+ * A complete new visual identity replacing the legacy cosmic/redesign-v2 layers.
+ * - Dark-first cinematic palette with holographic accents
+ * - Liquid glass surfaces (multi-layer refraction + edge highlights)
+ * - 3D tilt, magnetic hover, parallax depth
+ * - Cinematic easings, scroll-driven motion, neon glow
+ *
+ * Surfaces are scoped through CSS variables so existing shadcn primitives
+ * inherit automatically — no component rewrites required at the UI library level.
+ */
+
+/* ============================================================
+   1) PALETTE OVERRIDE — refines the semantic tokens in theme.css
+   so that bg-background, text-foreground, bg-card, etc. become
+   the new liquid-glass cinematic surfaces everywhere.
+   Both :root and .dark are overridden so the new aesthetic wins
+   regardless of next-themes class state.
+   ============================================================ */
+
+:root,
+:root.dark,
+.dark {
+  /* === Surfaces — graphite blacks & inks === */
+  --background: #06070d;
+  --ink-0: #06070d;
+  --ink-1: #0a0c14;
+  --ink-2: #10131d;
+  --ink-3: #161a28;
+  --ink-4: #1c2236;
+  --graphite: #20263a;
+
+  --foreground: #eef1ff;
+  --card: rgba(255, 255, 255, 0.04);
+  --card-foreground: #f4f6ff;
+  --popover: rgba(10, 12, 22, 0.94);
+  --popover-foreground: #f4f6ff;
+
+  /* === Hero palette: electric blue + neon purple + soft gold === */
+  --electric: #3b82f6;
+  --electric-bright: #60a5fa;
+  --neon: #a855f7;
+  --neon-bright: #c084fc;
+  --gold: #f0c674;
+  --gold-bright: #ffd98a;
+
+  /* Legacy aliases (SeatingMapPage + a few unrewritten chrome pieces from
+     the old redesign-v2 system that referenced these tokens directly). */
+  --accent-primary: #a855f7;
+  --accent-secondary: #3b82f6;
+  --text-muted: rgba(238, 241, 255, 0.62);
+  --text-subtle: rgba(238, 241, 255, 0.45);
+
+  --primary: #a855f7;
+  --primary-foreground: #ffffff;
+  --secondary: #3b82f6;
+  --secondary-foreground: #ffffff;
+  --accent: #f0c674;
+  --accent-foreground: #06070d;
+  --accent-orange: #fb923c;
+
+  --muted: rgba(255, 255, 255, 0.05);
+  --muted-foreground: #9ba1c4;
+  --destructive: #f43f5e;
+  --destructive-foreground: #ffffff;
+
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.06);
+  --input-background: rgba(255, 255, 255, 0.035);
+  --switch-background: rgba(255, 255, 255, 0.18);
+
+  --ring: #a855f7;
+  --chart-1: #a855f7;
+  --chart-2: #3b82f6;
+  --chart-3: #f0c674;
+  --chart-4: #22d3ee;
+  --chart-5: #34d399;
+  --radius: 1.25rem;
+
+  --sidebar: rgba(10, 12, 22, 0.7);
+  --sidebar-foreground: #eef1ff;
+  --sidebar-primary: #a855f7;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgba(255, 255, 255, 0.05);
+  --sidebar-accent-foreground: #eef1ff;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: #a855f7;
+
+  /* === Liquid Glass tokens — refined Apple Vision feel === */
+  --lg-bg: rgba(255, 255, 255, 0.045);
+  --lg-bg-strong: rgba(255, 255, 255, 0.085);
+  --lg-bg-soft: rgba(255, 255, 255, 0.025);
+  --lg-bg-deep: rgba(10, 12, 22, 0.65);
+  --lg-border: rgba(255, 255, 255, 0.1);
+  --lg-border-strong: rgba(255, 255, 255, 0.2);
+  --lg-border-bright: rgba(255, 255, 255, 0.32);
+  --lg-highlight: rgba(255, 255, 255, 0.4);
+  --lg-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.1) inset,
+    0 -1px 0 0 rgba(0, 0, 0, 0.4) inset,
+    0 24px 64px -22px rgba(0, 0, 0, 0.7),
+    0 10px 26px -12px rgba(0, 0, 0, 0.6);
+  --lg-shadow-hover:
+    0 1px 0 0 rgba(255, 255, 255, 0.22) inset,
+    0 -1px 0 0 rgba(0, 0, 0, 0.5) inset,
+    0 40px 100px -25px rgba(168, 85, 247, 0.4),
+    0 16px 40px -12px rgba(59, 130, 246, 0.3);
+  --lg-shadow-luxe:
+    0 1px 0 0 rgba(240, 198, 116, 0.3) inset,
+    0 -1px 0 0 rgba(0, 0, 0, 0.45) inset,
+    0 30px 80px -20px rgba(240, 198, 116, 0.18),
+    0 12px 30px -10px rgba(0, 0, 0, 0.55);
+  --lg-blur: 24px;
+  --lg-blur-heavy: 44px;
+  --lg-blur-xl: 72px;
+  --lg-saturate: 1.7;
+
+  /* === Cinematic gradients === */
+  --grad-aurora: linear-gradient(135deg, #a855f7 0%, #3b82f6 50%, #22d3ee 100%);
+  --grad-luxe: linear-gradient(135deg, #f0c674 0%, #c084fc 50%, #3b82f6 100%);
+  --grad-velvet: linear-gradient(135deg, #a855f7 0%, #6366f1 50%, #3b82f6 100%);
+  --grad-noir: linear-gradient(135deg, #06070d 0%, #10131d 50%, #1c2236 100%);
+  --grad-gold-leaf: linear-gradient(135deg, #f0c674 0%, #ffd98a 40%, #f0c674 80%, #b8893a 100%);
+  --grad-electric: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+  --grad-neon: linear-gradient(135deg, #a855f7 0%, #c084fc 100%);
+  --grad-iridescent:
+    conic-gradient(from 180deg at 50% 50%,
+      #c084fc 0deg, #a855f7 80deg, #3b82f6 160deg, #22d3ee 220deg, #f0c674 300deg, #c084fc 360deg);
+  --grad-text:
+    linear-gradient(135deg, #ffffff 0%, #c4b5fd 35%, #93c5fd 65%, #f0c674 100%);
+  --grad-text-warm:
+    linear-gradient(135deg, #ffffff 0%, #fcd34d 35%, #f0c674 70%, #fb923c 100%);
+  --grad-text-electric:
+    linear-gradient(135deg, #ffffff 0%, #93c5fd 50%, #3b82f6 100%);
+  --grad-text-neon:
+    linear-gradient(135deg, #ffffff 0%, #e9d5ff 35%, #c084fc 70%, #a855f7 100%);
+
+  /* === Cinematic glows === */
+  --glow-electric: 0 0 28px rgba(59, 130, 246, 0.6), 0 0 80px rgba(59, 130, 246, 0.25);
+  --glow-neon: 0 0 28px rgba(168, 85, 247, 0.6), 0 0 80px rgba(168, 85, 247, 0.25);
+  --glow-gold: 0 0 28px rgba(240, 198, 116, 0.55), 0 0 80px rgba(240, 198, 116, 0.2);
+  --glow-primary: var(--glow-neon);
+  --glow-secondary: var(--glow-electric);
+  --glow-pink: var(--glow-neon);
+  --glow-soft: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 18px 50px -20px rgba(0, 0, 0, 0.7);
+  --glow-luxe: 0 0 28px rgba(240, 198, 116, 0.35), 0 0 80px rgba(168, 85, 247, 0.2);
+
+  /* === Cinematic motion === */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-cinema: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-luxe: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-in-out-cinema: cubic-bezier(0.83, 0, 0.17, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-elastic: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  --dur-fast: 220ms;
+  --dur-mid: 480ms;
+  --dur-slow: 800ms;
+  --dur-cinematic: 1400ms;
+
+  /* === Depth scale === */
+  --z-backdrop: 0;
+  --z-content: 1;
+  --z-sticky: 40;
+  --z-nav: 50;
+  --z-overlay: 80;
+  --z-modal: 100;
+  --z-cursor: 9999;
+
+  /* === Typography === */
+  --font-display: 'Inter', 'SF Pro Display', system-ui, -apple-system, sans-serif;
+  --font-body: 'Inter', 'SF Pro Text', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
+  --font-serif: 'Instrument Serif', 'Times New Roman', serif;
+}
+
+/* Light theme — luxury aurora frosted-glass aesthetic
+   The previous palette was white-on-white (invisible cards). Surfaces are now
+   bright translucent panels with visible ink-tinted borders + lifted shadows. */
+:root.light,
+:root[data-theme="light"],
+.light {
+  --background: #f7f7fc;
+  --foreground: #0a0c1f;
+  --card: rgba(255, 255, 255, 0.86);
+  --card-foreground: #0a0c1f;
+  --popover: rgba(255, 255, 255, 0.96);
+  --popover-foreground: #0a0c1f;
+  --muted: rgba(10, 12, 31, 0.05);
+  --muted-foreground: #54577a;
+  --border: rgba(10, 12, 31, 0.10);
+  --input: rgba(10, 12, 31, 0.05);
+  --input-background: rgba(255, 255, 255, 0.92);
+  --switch-background: rgba(10, 12, 31, 0.18);
+
+  /* Liquid glass surfaces — must read clearly on the light aurora bg.
+     Cards are slightly tinted (white with a touch of cool) + stronger
+     visible inky borders + lifted shadows so they pop just like dark mode. */
+  --lg-bg: rgba(255, 255, 255, 0.82);
+  --lg-bg-strong: rgba(255, 255, 255, 0.92);
+  --lg-bg-soft: rgba(255, 255, 255, 0.65);
+  --lg-bg-deep: rgba(255, 255, 255, 0.96);
+  --lg-border: rgba(10, 12, 31, 0.14);
+  --lg-border-strong: rgba(10, 12, 31, 0.22);
+  --lg-border-bright: rgba(168, 85, 247, 0.5);
+  --lg-highlight: rgba(255, 255, 255, 0.9);
+  --lg-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.95) inset,
+    0 -1px 0 0 rgba(10, 12, 31, 0.06) inset,
+    0 18px 44px -14px rgba(10, 12, 31, 0.20),
+    0 6px 18px -6px rgba(10, 12, 31, 0.12);
+  --lg-shadow-hover:
+    0 1px 0 0 rgba(255, 255, 255, 1) inset,
+    0 -1px 0 0 rgba(10, 12, 31, 0.10) inset,
+    0 30px 70px -16px rgba(168, 85, 247, 0.32),
+    0 14px 30px -10px rgba(59, 130, 246, 0.22);
+  --lg-shadow-luxe:
+    0 1px 0 0 rgba(255, 255, 255, 0.95) inset,
+    0 -1px 0 0 rgba(10, 12, 31, 0.08) inset,
+    0 22px 50px -16px rgba(240, 198, 116, 0.38),
+    0 10px 24px -8px rgba(10, 12, 31, 0.14);
+
+  /* Cinematic gradients — adjusted for light mode contrast */
+  --grad-noir: linear-gradient(135deg, #f7f7fc 0%, #ede9fe 60%, #cffafe 100%);
+  --grad-text: linear-gradient(135deg, #0a0c1f 0%, #5b21b6 35%, #1d4ed8 65%, #b45309 100%);
+  --grad-text-warm: linear-gradient(135deg, #0a0c1f 0%, #c2410c 35%, #b45309 70%, #92400e 100%);
+  --grad-text-electric: linear-gradient(135deg, #0a0c1f 0%, #1d4ed8 50%, #3b82f6 100%);
+  --grad-text-neon: linear-gradient(135deg, #0a0c1f 0%, #5b21b6 35%, #7c3aed 70%, #a855f7 100%);
+
+  /* Softened cinematic glows for light surfaces */
+  --glow-electric: 0 0 22px rgba(59, 130, 246, 0.32), 0 0 60px rgba(59, 130, 246, 0.14);
+  --glow-neon: 0 0 22px rgba(168, 85, 247, 0.32), 0 0 60px rgba(168, 85, 247, 0.14);
+  --glow-gold: 0 0 22px rgba(240, 198, 116, 0.4), 0 0 60px rgba(240, 198, 116, 0.16);
+  --glow-soft: 0 0 0 1px rgba(10, 12, 31, 0.06), 0 14px 36px -14px rgba(10, 12, 31, 0.18);
+  --glow-luxe: 0 0 22px rgba(240, 198, 116, 0.28), 0 0 60px rgba(168, 85, 247, 0.18);
+
+  /* Admin sidebar — frosted light panel matching site cards */
+  --sidebar: rgba(255, 255, 255, 0.9);
+  --sidebar-foreground: #0a0c1f;
+  --sidebar-primary: #6366f1;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgba(99, 102, 241, 0.08);
+  --sidebar-accent-foreground: #0a0c1f;
+  --sidebar-border: rgba(10, 12, 31, 0.12);
+  --sidebar-ring: #6366f1;
+}
+
+/* Soft aurora wash in light mode — gives a luxe atmospheric backdrop
+   without the heavy dark canvas (which is faded out in light mode anyway). */
+.light body {
+  /* Sharper light surface — single very subtle warm wash, no overlapping
+     lavender/blue/gold halos (which read as a hazy purple haze on the page).
+     Crisp paper-like base lets the 3D stage props pop. */
+  background:
+    radial-gradient(80% 60% at 50% -10%, rgba(168, 85, 247, 0.05), transparent 70%),
+    #f4f4f9;
+}
+
+/* ============================================================
+   2) BASE PAGE
+   ============================================================ */
+
+html {
+  min-height: 100%;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  min-height: 100%;
+  background: linear-gradient(180deg, #06070d 0%, #0a0c14 50%, #06070d 100%);
+  color: var(--foreground);
+  font-family: var(--font-body);
+}
+
+/* === Theme transitions — scoped, GPU-accelerated, View-Transitions API ready ===
+
+   We deliberately do NOT keep an always-on `*` transition (that was firing
+   color/border/bg animations on every hover and DOM mutation, eating CPU
+   on every interaction). Instead, transitions are armed only during a
+   ~340ms window after the user toggles the theme. We also opt-in to the
+   View Transitions API in supporting browsers — that does a single
+   compositor-side cross-fade on a snapshot, which is far cheaper than
+   animating thousands of element repaints.
+*/
+html.theme-transitioning,
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition:
+    background-color 280ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    fill 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    stroke 220ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+/* View Transitions API — Chromium browsers get a single GPU cross-fade
+   between root snapshots instead of per-element transitions. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 520ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  animation-name: lg-vt-fade-out;
+  z-index: 1;
+}
+::view-transition-new(root) {
+  animation-name: lg-vt-fade-in;
+  z-index: 2;
+}
+
+@keyframes lg-vt-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+@keyframes lg-vt-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Honor reduced-motion: snap, don't animate. */
+@media (prefers-reduced-motion: reduce) {
+  html.theme-transitioning,
+  html.theme-transitioning *,
+  html.theme-transitioning *::before,
+  html.theme-transitioning *::after {
+    transition: none !important;
+  }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+}
+
+/* Lenis required CSS: it sets `overflow: hidden` on html during smooth-scroll,
+   and applies these classes so wheel events keep flowing. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+::selection {
+  background: rgba(139, 92, 246, 0.4);
+  color: #ffffff;
+}
+
+/* ============================================================
+   3) SCROLLBAR
+   ============================================================ */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 92, 246, 0.4) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(139, 92, 246, 0.5), rgba(6, 182, 212, 0.4));
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(139, 92, 246, 0.8), rgba(6, 182, 212, 0.7));
+  background-clip: padding-box;
+  border: 2px solid transparent;
+}
+
+/* ============================================================
+   4) LIQUID GLASS PRIMITIVES
+   ============================================================ */
+
+.lg-surface {
+  background: var(--lg-bg);
+  backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+  -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+  border: 1px solid var(--lg-border);
+  box-shadow: var(--lg-shadow);
+  border-radius: var(--radius);
+  position: relative;
+  isolation: isolate;
+}
+
+/* Inner highlight + faint refraction */
+.lg-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, var(--lg-highlight) 0%, transparent 28%),
+    linear-gradient(0deg, rgba(0, 0, 0, 0.18) 0%, transparent 30%);
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+  z-index: 0;
+}
+
+.lg-surface > * {
+  position: relative;
+  z-index: 1;
+}
+
+.lg-surface-strong {
+  background: var(--lg-bg-strong);
+  backdrop-filter: blur(var(--lg-blur-heavy)) saturate(var(--lg-saturate));
+  -webkit-backdrop-filter: blur(var(--lg-blur-heavy)) saturate(var(--lg-saturate));
+  border: 1px solid var(--lg-border-strong);
+  box-shadow: var(--lg-shadow);
+  border-radius: var(--radius);
+}
+
+/* Reusable skeleton shimmer for loading states */
+.lg-skeleton {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.06) 50%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+}
+.lg-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 100%
+  );
+  animation: lg-skeleton-shimmer 1.6s linear infinite;
+}
+@keyframes lg-skeleton-shimmer {
+  100% { transform: translateX(100%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lg-skeleton::after { animation: none; }
+}
+
+.lg-card {
+  background: var(--lg-bg);
+  backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+  -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+  border: 1px solid var(--lg-border);
+  border-radius: var(--radius);
+  box-shadow: var(--lg-shadow);
+  transition:
+    transform var(--dur-mid) var(--ease-out-cinema),
+    box-shadow var(--dur-mid) var(--ease-out-cinema),
+    border-color var(--dur-mid) var(--ease-out-cinema);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.lg-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(180deg, var(--lg-highlight) 0%, transparent 25%),
+    linear-gradient(0deg, rgba(0, 0, 0, 0.18) 0%, transparent 30%);
+  mix-blend-mode: overlay;
+  opacity: 0.55;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.lg-card::after {
+  /* prismatic edge — faintly always-on so the card border shimmers subtly */
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.65), rgba(59, 130, 246, 0.5) 45%, rgba(240, 198, 116, 0.45));
+  -webkit-mask:
+    linear-gradient(#000, #000) content-box,
+    linear-gradient(#000, #000);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: 0.35;
+  pointer-events: none;
+  transition: opacity var(--dur-mid) var(--ease-out-cinema);
+  z-index: 2;
+}
+
+.lg-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.lg-card:hover {
+  border-color: var(--lg-border-strong);
+  box-shadow: var(--lg-shadow-hover);
+  transform: translateY(-4px);
+}
+
+.lg-card:hover::after {
+  opacity: 1;
+}
+
+/* Tilt-ready 3D card */
+.lg-3d {
+  transform-style: preserve-3d;
+  perspective: 1200px;
+  will-change: transform;
+}
+
+/* Magnetic / tilt children */
+.lg-3d-inner {
+  transform: translateZ(0);
+  transition: transform var(--dur-mid) var(--ease-out-cinema);
+}
+
+/* Liquid glass button */
+.lg-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.75rem 1.55rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.005em;
+  color: #fff;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0) 55%),
+    linear-gradient(135deg, rgba(168, 85, 247, 0.98) 0%, rgba(99, 102, 241, 0.95) 45%, rgba(59, 130, 246, 0.95) 100%);
+  backdrop-filter: blur(14px) saturate(1.5);
+  -webkit-backdrop-filter: blur(14px) saturate(1.5);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.4) inset,
+    0 -1px 0 0 rgba(0, 0, 0, 0.3) inset,
+    0 14px 32px -8px rgba(168, 85, 247, 0.55),
+    0 6px 16px -4px rgba(59, 130, 246, 0.4);
+  transition:
+    transform var(--dur-fast) var(--ease-out-luxe),
+    box-shadow var(--dur-fast) var(--ease-out-luxe),
+    filter var(--dur-fast) var(--ease-out-luxe);
+  isolation: isolate;
+}
+
+.lg-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08) saturate(1.1);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.55) inset,
+    0 -1px 0 0 rgba(0, 0, 0, 0.3) inset,
+    0 20px 44px -10px rgba(168, 85, 247, 0.7),
+    0 8px 22px -6px rgba(59, 130, 246, 0.6);
+}
+
+.lg-btn--gold {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 55%),
+    linear-gradient(135deg, #f0c674 0%, #ffd98a 50%, #f0c674 100%);
+  color: #1c1306;
+  border-color: rgba(240, 198, 116, 0.5);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.6) inset,
+    0 -1px 0 0 rgba(120, 80, 20, 0.3) inset,
+    0 14px 32px -8px rgba(240, 198, 116, 0.55);
+}
+
+.lg-btn--gold:hover {
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.8) inset,
+    0 -1px 0 0 rgba(120, 80, 20, 0.4) inset,
+    0 22px 48px -10px rgba(240, 198, 116, 0.7);
+}
+
+.lg-btn--electric {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 55%),
+    linear-gradient(135deg, #3b82f6 0%, #60a5fa 50%, #22d3ee 100%);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.5) inset,
+    0 14px 32px -8px rgba(59, 130, 246, 0.6);
+}
+
+.lg-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.lg-btn--ghost {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0) 60%),
+    rgba(255, 255, 255, 0.04);
+  color: var(--foreground);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.18) inset,
+    0 -1px 0 0 rgba(0, 0, 0, 0.25) inset,
+    0 8px 22px -8px rgba(8, 5, 30, 0.4);
+}
+
+.lg-btn--ghost:hover {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0) 60%),
+    rgba(255, 255, 255, 0.08);
+}
+
+/* Liquid glass input */
+.lg-input {
+  width: 100%;
+  padding-block: 0.85rem;
+  padding-inline: 1rem;
+  border-radius: 0.85rem;
+  background: var(--input-background);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  font-size: 0.95rem;
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  transition:
+    border-color var(--dur-fast) var(--ease-out-cinema),
+    box-shadow var(--dur-fast) var(--ease-out-cinema),
+    background var(--dur-fast) var(--ease-out-cinema);
+}
+
+.lg-input::placeholder {
+  color: var(--muted-foreground);
+}
+
+.lg-input:focus {
+  outline: none;
+  border-color: rgba(168, 85, 247, 0.65);
+  box-shadow:
+    0 0 0 4px rgba(168, 85, 247, 0.18),
+    0 12px 30px -10px rgba(168, 85, 247, 0.4);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Room for absolutely positioned leading/trailing icons (auth forms) */
+.input-cosmic.input-has-leading-icon,
+.lg-input.input-has-leading-icon {
+  padding-inline-start: 2.875rem !important;
+}
+
+.input-cosmic.input-has-trailing-icon,
+.lg-input.input-has-trailing-icon {
+  padding-inline-end: 2.875rem !important;
+}
+
+/* ============================================================
+   5) GLOBAL UPGRADES — make shadcn primitives feel "glass"
+   ============================================================ */
+
+[data-slot="card"] {
+  background: var(--lg-bg) !important;
+  backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+  -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+  border: 1px solid var(--lg-border) !important;
+  box-shadow: var(--lg-shadow);
+  border-radius: var(--radius) !important;
+  color: var(--card-foreground);
+  position: relative;
+  isolation: isolate;
+}
+
+[data-slot="card"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(180deg, var(--lg-highlight) 0%, transparent 28%),
+    linear-gradient(0deg, rgba(0, 0, 0, 0.18) 0%, transparent 30%);
+  mix-blend-mode: overlay;
+  opacity: 0.55;
+  pointer-events: none;
+  z-index: 0;
+}
+
+[data-slot="card"] > * {
+  position: relative;
+  z-index: 1;
+}
+
+[data-slot="card"]:hover {
+  border-color: var(--lg-border-strong) !important;
+  box-shadow: var(--lg-shadow-hover);
+}
+
+[data-slot="input"],
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):not([type="color"]):not([data-slot="toggle"]),
+select,
+textarea {
+  background: var(--input-background) !important;
+  border-color: var(--border) !important;
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  color: var(--foreground);
+  border-radius: 0.85rem !important;
+  transition:
+    border-color var(--dur-fast) var(--ease-out-cinema),
+    box-shadow var(--dur-fast) var(--ease-out-cinema),
+    background var(--dur-fast) var(--ease-out-cinema) !important;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none !important;
+  border-color: rgba(168, 85, 247, 0.6) !important;
+  box-shadow:
+    0 0 0 4px rgba(168, 85, 247, 0.18),
+    0 12px 30px -10px rgba(168, 85, 247, 0.4) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* Buttons — make primary use aurora gradient */
+[data-slot="button"] {
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  border-radius: 999px;
+  transition:
+    transform var(--dur-fast) var(--ease-out-cinema),
+    box-shadow var(--dur-fast) var(--ease-out-cinema),
+    filter var(--dur-fast) var(--ease-out-cinema) !important;
+}
+
+[data-slot="button"].bg-primary,
+[data-slot="button"][class*="from-primary"],
+[data-slot="button"][class*="bg-gradient-to-r"] {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0) 55%),
+    linear-gradient(135deg, #a855f7 0%, #6366f1 45%, #3b82f6 100%) !important;
+  color: #fff !important;
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.4) inset,
+    0 -1px 0 0 rgba(0, 0, 0, 0.3) inset,
+    0 14px 32px -8px rgba(168, 85, 247, 0.55),
+    0 6px 16px -4px rgba(59, 130, 246, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+}
+
+[data-slot="button"].bg-primary:hover,
+[data-slot="button"][class*="from-primary"]:hover,
+[data-slot="button"][class*="bg-gradient-to-r"]:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08) saturate(1.08);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.55) inset,
+    0 20px 44px -10px rgba(168, 85, 247, 0.7),
+    0 8px 22px -6px rgba(59, 130, 246, 0.55) !important;
+}
+
+[data-slot="button"][class*="outline"] {
+  background: var(--lg-bg) !important;
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  border: 1px solid var(--lg-border-strong) !important;
+  color: var(--foreground) !important;
+}
+
+[data-slot="button"][class*="outline"]:hover {
+  background: var(--lg-bg-strong) !important;
+  border-color: rgba(139, 92, 246, 0.5) !important;
+}
+
+[data-slot="button"][class*="ghost"]:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* Dialog / Dropdown / Popover panels become liquid glass */
+[data-slot="dialog-content"],
+[data-slot="popover-content"],
+[data-slot="dropdown-menu-content"],
+[data-slot="select-content"],
+[data-slot="hover-card-content"],
+[data-slot="tooltip-content"],
+[data-slot="sheet-content"],
+[data-slot="alert-dialog-content"],
+[data-slot="command"] {
+  background: rgba(10, 12, 28, 0.78) !important;
+  backdrop-filter: blur(28px) saturate(1.6) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(1.6) !important;
+  border: 1px solid var(--lg-border-strong) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: var(--lg-shadow);
+  color: var(--foreground) !important;
+}
+
+.light [data-slot="dialog-content"],
+.light [data-slot="popover-content"],
+.light [data-slot="dropdown-menu-content"],
+.light [data-slot="select-content"],
+.light [data-slot="hover-card-content"],
+.light [data-slot="tooltip-content"],
+.light [data-slot="sheet-content"],
+.light [data-slot="alert-dialog-content"],
+.light [data-slot="command"] {
+  background: rgba(255, 255, 255, 0.85) !important;
+  color: var(--foreground) !important;
+}
+
+/* Select list items — readable in dark mode (Radix) */
+[data-slot="select-item"] {
+  color: var(--foreground) !important;
+}
+
+[data-slot="select-item"][data-highlighted],
+[data-slot="select-item"]:focus {
+  background: rgba(139, 92, 246, 0.22) !important;
+  color: var(--foreground) !important;
+}
+
+[data-slot="select-item"][data-state="checked"] {
+  background: rgba(99, 102, 241, 0.3) !important;
+  color: var(--foreground) !important;
+}
+
+/* Native select fallback (where still used) */
+.dark select option,
+select option {
+  background-color: var(--card);
+  color: var(--foreground);
+}
+
+/* react-day-picker: hide native month/year selects when Radix dropdown is used */
+.rdp-flowtic .rdp-dropdown select,
+.rdp-flowtic select.rdp-dropdown {
+  display: none !important;
+}
+
+.rdp-flowtic .rdp-caption_dropdowns {
+  gap: 0.5rem;
+}
+
+/* Tabs */
+[data-slot="tabs-list"] {
+  background: var(--lg-bg) !important;
+  backdrop-filter: blur(14px) saturate(1.3);
+  border: 1px solid var(--lg-border) !important;
+  border-radius: 999px !important;
+  padding: 4px !important;
+}
+
+[data-slot="tabs-trigger"][data-state="active"] {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.95), rgba(59, 130, 246, 0.85)) !important;
+  color: #fff !important;
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.3) inset,
+    0 6px 18px -6px rgba(168, 85, 247, 0.5) !important;
+  border-radius: 999px !important;
+}
+
+/* Badge */
+[data-slot="badge"] {
+  background: var(--lg-bg-strong) !important;
+  border: 1px solid var(--lg-border-strong) !important;
+  backdrop-filter: blur(10px) saturate(1.3);
+  color: var(--foreground) !important;
+}
+
+/* Toaster (sonner) */
+body [data-sonner-toast] {
+  background: rgba(10, 12, 28, 0.85) !important;
+  backdrop-filter: blur(28px) saturate(1.6) !important;
+  border: 1px solid var(--lg-border-strong) !important;
+  border-radius: 1rem !important;
+  color: var(--foreground) !important;
+  box-shadow: var(--lg-shadow);
+}
+
+body [data-sonner-toast][data-type="success"] {
+  border-left: 3px solid #34d399 !important;
+}
+body [data-sonner-toast][data-type="error"] {
+  border-left: 3px solid #f43f5e !important;
+}
+body [data-sonner-toast][data-type="info"] {
+  border-left: 3px solid #06b6d4 !important;
+}
+body [data-sonner-toast][data-type="warning"] {
+  border-left: 3px solid #fb923c !important;
+}
+
+/* Table — glassy header */
+[data-slot="table"] thead tr {
+  background: var(--lg-bg) !important;
+  backdrop-filter: blur(14px);
+}
+
+/* ============================================================
+   6) UTILITIES — text gradients, glow, divider, mesh
+   ============================================================ */
+
+.text-aurora,
+.text-luxe {
+  background: var(--grad-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.text-warm {
+  background: var(--grad-text-warm);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.text-gold {
+  background: var(--grad-gold-leaf);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.text-electric {
+  background: var(--grad-text-electric);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.text-neon {
+  background: var(--grad-text-neon);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.text-iridescent {
+  background: var(--grad-iridescent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Slow shimmer sweep for hero gradients */
+.text-shimmer {
+  background-size: 220% 100%;
+  animation: lg-text-shimmer 7s ease-in-out infinite;
+}
+
+@keyframes lg-text-shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Cinematic per-word reveal on hero text */
+.hero-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(28px) scale(0.96);
+  filter: blur(14px);
+  animation: hero-word-in 900ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes hero-word-in {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-word {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  .text-shimmer { animation: none; }
+  .hero-slogan {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+/* Hero tagline under the neon pill */
+.hero-slogan {
+  position: relative;
+  isolation: isolate;
+  max-width: 22rem;
+  text-wrap: balance;
+  padding: 0.5rem 1.25rem;
+  border-radius: 999px;
+  font-family: var(--font-serif, ui-serif, Georgia, 'Times New Roman', serif);
+  font-style: italic;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  letter-spacing: 0.015em;
+  background-image: var(--grad-text-warm);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  background-size: 220% 100%;
+  animation: lg-text-shimmer 9s ease-in-out infinite;
+}
+
+.hero-slogan::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: rgba(168, 85, 247, 0.07);
+  border: 1px solid rgba(168, 85, 247, 0.28);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 10px 28px rgba(0, 0, 0, 0.14);
+  backdrop-filter: blur(14px) saturate(1.4);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+}
+
+.light .hero-slogan::before {
+  background: rgba(255, 255, 255, 0.78);
+  border-color: rgba(124, 58, 237, 0.22);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.65) inset,
+    0 8px 24px rgba(124, 58, 237, 0.08);
+}
+
+@media (min-width: 640px) {
+  .hero-slogan {
+    max-width: 26rem;
+    font-size: 1rem;
+    padding: 0.55rem 1.5rem;
+  }
+}
+
+/* Mobile / touch: skip expensive blur on hero words; keep fade-up motion */
+.perf-lite .hero-word {
+  filter: none;
+  transform: translateY(18px);
+  animation: hero-word-in-lite 650ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@media (max-width: 768px) {
+  .hero-word {
+    filter: none;
+    transform: translateY(18px);
+    animation: hero-word-in-lite 650ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+}
+
+@keyframes hero-word-in-lite {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.perf-lite .lg-backdrop--lite .lg-backdrop__orb--a {
+  width: 420px;
+  height: 420px;
+  top: -120px;
+  left: -80px;
+  opacity: 0.42;
+  animation-duration: 48s;
+}
+
+.perf-lite .lg-backdrop__grid {
+  opacity: 0.35;
+}
+
+.perf-lite .reveal {
+  transform: translateY(14px);
+  transition-duration: 480ms;
+}
+
+.perf-lite .scroll-fade-rise {
+  transform: translate3d(0, 24px, 0);
+  transition-duration: 480ms;
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+/* === Theme-aware glass overlays ===
+   Reusable classes for floating panels/banners/search-pills that were
+   previously inline-styled with `rgba(8,9,18,X)` (dark-only, invisible
+   on the light aurora bg). These adapt automatically to both themes. */
+
+/* Generic floating glass pill (used by hero search, etc.) */
+.lg-glass-pill {
+  background: rgba(8, 9, 18, 0.55);
+  border-color: var(--lg-border-strong);
+  box-shadow: var(--lg-shadow);
+  backdrop-filter: blur(18px) saturate(1.7);
+  -webkit-backdrop-filter: blur(18px) saturate(1.7);
+}
+
+.light .lg-glass-pill {
+  background: rgba(255, 255, 255, 0.86);
+  border-color: var(--lg-border-strong);
+}
+
+/* Gold/notify banner — email verify, AI announcement, warning toasts */
+.lg-banner-gold {
+  border-color: rgba(240, 198, 116, 0.4);
+  background: rgba(240, 198, 116, 0.07);
+  color: #fcd99a;
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+}
+
+.light .lg-banner-gold {
+  border-color: rgba(184, 134, 11, 0.5);
+  background: rgba(240, 198, 116, 0.22);
+  color: #6b3a05;
+}
+
+/* Light-mode booster for the EventThemeBackdrop ghost icons.
+   In dark mode their 10% colored tint glows nicely; on a light bg the
+   same colors disappear. `multiply` blend mode + opacity multiplier
+   keeps the same hue but makes them readable as subtle dark accents. */
+.lg-ghost-icon {
+  transition: filter 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.light .lg-ghost-icon {
+  mix-blend-mode: multiply;
+  filter: opacity(2.6) saturate(1.2);
+}
+
+/* === Navbar — theme-aware, no layout shift on scroll ===
+   Backgrounds/borders use CSS vars so light & dark both look right.
+   No padding changes on scroll → no jump when scrollY hits the threshold. */
+.lg-nav-pill {
+  background: var(--lg-bg-soft);
+  backdrop-filter: blur(16px) saturate(1.6);
+  -webkit-backdrop-filter: blur(16px) saturate(1.6);
+  border-color: var(--lg-border);
+  box-shadow: var(--lg-shadow);
+  transition:
+    background-color 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lg-nav-pill[data-scrolled='true'] {
+  background: var(--lg-bg-deep);
+  border-color: var(--lg-border-strong);
+  box-shadow: var(--lg-shadow-hover);
+}
+
+.navbar-brand-logo-wrap {
+  line-height: 0;
+}
+
+.navbar-brand-logo {
+  display: block;
+}
+
+/* === Mobile bottom tab bar === */
+.mobile-bottom-nav {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  pointer-events: none;
+}
+
+.mobile-bottom-nav__inner {
+  pointer-events: auto;
+  margin-bottom: max(0.35rem, env(safe-area-inset-bottom, 0px));
+  padding-top: 0.35rem;
+  padding-bottom: 0.25rem;
+  border-radius: 1.25rem 1.25rem 0 0;
+  background: var(--lg-bg-deep);
+  backdrop-filter: blur(20px) saturate(1.65);
+  -webkit-backdrop-filter: blur(20px) saturate(1.65);
+  border: 1px solid var(--lg-border-strong);
+  border-bottom: none;
+  box-shadow: 0 -8px 32px -12px rgba(0, 0, 0, 0.45);
+}
+
+.mobile-bottom-nav__tab {
+  color: var(--muted-foreground);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-bottom-nav__tab[data-active='true'] {
+  color: #fff;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.45), rgba(59, 130, 246, 0.35));
+  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.2) inset;
+}
+
+.mobile-more-sheet {
+  background: var(--lg-bg-deep) !important;
+  border-color: var(--lg-border-strong) !important;
+}
+
+/* Display sizes — cinematic premium scale.
+   `.display-hero` is calibrated to fit comfortably inside the hero
+   container at every breakpoint (no overflow on tablet/desktop) while
+   still feeling theatrical. Weight 800 keeps it bold without going
+   into the "all caps street poster" extreme. */
+.display-hero {
+  font-size: clamp(44px, 8.5vw, 132px);
+  line-height: 0.96;
+  letter-spacing: -0.04em;
+  font-weight: 800;
+}
+
+.display-1 {
+  font-size: clamp(44px, 8vw, 96px);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  font-weight: 800;
+}
+
+.display-2 {
+  font-size: clamp(32px, 5vw, 64px);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  font-weight: 800;
+}
+
+.display-3 {
+  font-size: clamp(24px, 3.4vw, 44px);
+  line-height: 1.1;
+  letter-spacing: -0.022em;
+  font-weight: 700;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.eyebrow-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #a855f7, #3b82f6);
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.6);
+}
+
+.glow-primary { box-shadow: var(--glow-primary); }
+.glow-secondary { box-shadow: var(--glow-secondary); }
+.glow-pink { box-shadow: var(--glow-pink); }
+
+.divider-aurora {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.5), rgba(6, 182, 212, 0.45), transparent);
+}
+
+.mesh-noise {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* ============================================================
+   7) 3D BACKDROP CANVAS HOST
+   ============================================================ */
+
+.lg-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Orbs already have a soft radial-gradient edge, so we don't need a 60-80px
+   filter:blur on top of it. That filter triggers an offscreen GPU pass for the
+   entire orb every frame the animation steps — removing it is a major win.   */
+.lg-backdrop__orb {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.55;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  animation: lg-orb-drift 32s var(--ease-in-out-cinema) infinite;
+}
+
+/* On light surfaces the orbs read as a fuzzy purple/blue smear. Drop
+   their opacity to ~25% so the bg feels crisp and the props get the
+   chromatic attention. */
+.light .lg-backdrop__orb {
+  opacity: 0.18;
+}
+
+.light .lg-backdrop__orb--c {
+  opacity: 0.12;
+}
+
+.lg-backdrop__orb--still {
+  animation: none;
+}
+
+.lg-backdrop__orb--a {
+  width: 720px;
+  height: 720px;
+  top: -240px;
+  left: -160px;
+  background: radial-gradient(circle at 35% 35%, rgba(168, 85, 247, 0.85) 0%, rgba(168, 85, 247, 0) 65%);
+  animation-delay: 0s;
+}
+
+.lg-backdrop__orb--b {
+  width: 620px;
+  height: 620px;
+  top: 14%;
+  right: -180px;
+  background: radial-gradient(circle at 60% 40%, rgba(59, 130, 246, 0.8) 0%, rgba(59, 130, 246, 0) 65%);
+  animation-delay: -10s;
+}
+
+.lg-backdrop__orb--c {
+  width: 520px;
+  height: 520px;
+  bottom: -200px;
+  left: 28%;
+  background: radial-gradient(circle at 50% 50%, rgba(240, 198, 116, 0.7) 0%, rgba(240, 198, 116, 0) 65%);
+  animation-delay: -20s;
+  opacity: 0.38;
+}
+
+/* Slower & smaller transforms = fewer GPU rasterizations per second. */
+@keyframes lg-orb-drift {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(28px, -36px, 0); }
+}
+
+.lg-backdrop__grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse 60% 60% at 50% 50%, #000 30%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse 60% 60% at 50% 50%, #000 30%, transparent 70%);
+  opacity: 0.5;
+}
+
+.light .lg-backdrop__grid {
+  background-image:
+    linear-gradient(to right, rgba(10, 12, 31, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(10, 12, 31, 0.04) 1px, transparent 1px);
+}
+
+@keyframes lg-pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.9; }
+}
+
+@keyframes lg-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ============================================================
+   8) SCROLL REVEAL
+   ============================================================ */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 700ms var(--ease-out-cinema),
+    transform 700ms var(--ease-out-cinema);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Drop the will-change hint after the transition settles. Holding will-change
+   indefinitely forces the element onto its own GPU layer permanently, which
+   bloats memory across long pages. */
+.reveal:not(.is-visible) {
+  will-change: opacity, transform;
+}
+
+/* ============================================================
+   9) PROGRESS / LOADER UTILITIES
+   ============================================================ */
+
+.lg-progress {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  position: relative;
+}
+
+.lg-progress__bar {
+  height: 100%;
+  background: linear-gradient(90deg, #8b5cf6, #06b6d4, #f0abfc);
+  background-size: 200% 100%;
+  animation: lg-shimmer 3s linear infinite;
+  border-radius: inherit;
+}
+
+/* ============================================================
+   10) IMAGE / MEDIA POLISH
+   ============================================================ */
+
+.lg-media {
+  position: relative;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.lg-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1);
+  transition: transform 1200ms var(--ease-out-cinema);
+}
+
+.lg-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 35%, rgba(5, 6, 20, 0.85) 100%);
+  pointer-events: none;
+}
+
+.group:hover .lg-media img,
+.lg-card:hover .lg-media img {
+  transform: scale(1.08);
+}
+
+/* ============================================================
+   11) FOCUS RINGS
+   ============================================================ */
+
+*:focus-visible {
+  outline: none;
+}
+
+a:focus-visible,
+button:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--background),
+    0 0 0 4px rgba(139, 92, 246, 0.7);
+  border-radius: inherit;
+}
+
+/* ============================================================
+   12) ACCESSIBILITY — reduced motion
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .lg-backdrop__orb {
+    animation: none !important;
+  }
+}
+
+/* ============================================================
+   13) LEGACY CLASS BRIDGES — keep old pages styled in new aesthetic
+   without rewriting every component. These map old cosmic /
+   redesign classes onto the liquid-glass tokens.
+   ============================================================ */
+
+.cosmic-shell,
+.redesign-root,
+.main-redesign-surface {
+  background: transparent !important;
+}
+
+.cosmic-auth-card,
+.cosmic-card,
+.cosmic-panel,
+.cosmic-glass {
+  background: var(--lg-bg) !important;
+  border: 1px solid var(--lg-border-strong) !important;
+  border-radius: var(--radius) !important;
+  backdrop-filter: blur(var(--lg-blur-heavy)) saturate(var(--lg-saturate)) !important;
+  -webkit-backdrop-filter: blur(var(--lg-blur-heavy)) saturate(var(--lg-saturate)) !important;
+  box-shadow: var(--lg-shadow) !important;
+  color: var(--foreground) !important;
+  position: relative;
+  isolation: isolate;
+}
+
+.cosmic-auth-card > *,
+.cosmic-card > *,
+.cosmic-panel > *,
+.cosmic-glass > * {
+  position: relative;
+  z-index: 1;
+}
+
+.cosmic-panel-glow {
+  box-shadow:
+    var(--lg-shadow),
+    0 0 60px -10px rgba(139, 92, 246, 0.35),
+    0 0 100px -30px rgba(6, 182, 212, 0.25) !important;
+  border-color: rgba(139, 92, 246, 0.35) !important;
+}
+
+.cosmic-event-hero-fade {
+  background: linear-gradient(180deg, transparent 30%, rgba(5, 6, 20, 0.45) 60%, rgba(5, 6, 20, 0.92) 100%);
+}
+
+/* Legacy stat cards used in UserDashboard */
+.redesign-stats-wrap {
+  position: relative;
+  padding: 4px;
+}
+
+.redesign-stat-card {
+  background: var(--lg-bg) !important;
+  border: 1px solid var(--lg-border) !important;
+  border-radius: var(--radius) !important;
+  backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate)) !important;
+  -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate)) !important;
+  box-shadow: var(--lg-shadow);
+  color: var(--foreground);
+  position: relative;
+  isolation: isolate;
+  transition:
+    transform var(--dur-mid) var(--ease-out-cinema),
+    box-shadow var(--dur-mid) var(--ease-out-cinema),
+    border-color var(--dur-mid) var(--ease-out-cinema);
+}
+
+.redesign-stat-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--lg-border-strong) !important;
+  box-shadow: var(--lg-shadow-hover);
+}
+
+.redesign-stat-value {
+  background: var(--grad-text) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.redesign-event-card,
+.redesign-event-outer {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.cosmic-auth-aside {
+  background:
+    radial-gradient(600px 400px at 30% 30%, rgba(139, 92, 246, 0.28), transparent 60%),
+    radial-gradient(700px 400px at 80% 80%, rgba(6, 182, 212, 0.22), transparent 60%);
+}
+
+.cosmic-display {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  background: var(--grad-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.cosmic-mono {
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+}
+
+.cosmic-scroll-bar-fill {
+  background: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 50%, #f0abfc 100%) !important;
+  box-shadow: 0 0 24px rgba(139, 92, 246, 0.45) !important;
+}
+
+.input-cosmic,
+.cosmic-dob-trigger,
+.form-input-cosmic {
+  width: 100%;
+  padding-block: 0.85rem;
+  padding-inline: 1rem;
+  border-radius: 0.85rem !important;
+  background: var(--input-background) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--foreground) !important;
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  font-size: 0.95rem;
+  transition:
+    border-color var(--dur-fast) var(--ease-out-cinema),
+    box-shadow var(--dur-fast) var(--ease-out-cinema),
+    background var(--dur-fast) var(--ease-out-cinema);
+}
+
+.cosmic-dob-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-align: left;
+}
+
+.input-cosmic:focus,
+.cosmic-dob-trigger:focus,
+.form-input-cosmic:focus {
+  outline: none;
+  border-color: rgba(139, 92, 246, 0.6) !important;
+  box-shadow:
+    0 0 0 4px rgba(139, 92, 246, 0.18),
+    0 12px 30px -10px rgba(139, 92, 246, 0.35) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+
+.form-label-cosmic {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+/* Legacy button class still in some pages */
+.btn-cosmic,
+.btn-cosmic-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.4rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #fff;
+  border: 1px solid var(--lg-border);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0) 60%),
+    linear-gradient(135deg, rgba(139, 92, 246, 0.95), rgba(6, 182, 212, 0.85));
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.35) inset,
+    0 12px 30px -8px rgba(139, 92, 246, 0.55);
+}
+
+/* Cosmic colour aliases used by legacy components */
+:root,
+:root.dark,
+.dark {
+  --void: #050614;
+  --deep-space: #080a1c;
+  --nebula: #0f1230;
+  --cosmos: #14172e;
+  --atmosphere: #1b1f3a;
+  --star-white: #f4f5ff;
+  --star-dim: #b8bce0;
+  --star-mute: #6a6f9c;
+  --plasma: #8b5cf6;
+  --plasma-glow: rgba(139, 92, 246, 0.4);
+  --plasma-dim: rgba(139, 92, 246, 0.12);
+  --ion: #a78bfa;
+  --ion-glow: rgba(167, 139, 250, 0.3);
+  --photon: #06b6d4;
+  --photon-glow: rgba(6, 182, 212, 0.35);
+  --aurora: #34d399;
+  --aurora-glow: rgba(52, 211, 153, 0.3);
+  --solar: #fb923c;
+  --solar-glow: rgba(251, 146, 60, 0.3);
+  --supernova: #f43f5e;
+  --r-sm: 0.85rem;
+  --r-md: 1rem;
+  --r-lg: 1.25rem;
+  --grad-plasma: linear-gradient(135deg, #8b5cf6 0%, #6366f1 50%, #06b6d4 100%);
+  --grad-aurora: linear-gradient(135deg, #34d399 0%, #06b6d4 100%);
+  --grad-cosmic: linear-gradient(180deg, #8b5cf6 0%, #6366f1 50%, #050614 100%);
+  --grad-hero-text: var(--grad-text);
+  --glow-card: var(--lg-shadow);
+  --glow-card-hover: var(--lg-shadow-hover);
+  --font-display: 'Inter', system-ui, sans-serif;
+  --font-editorial: 'Instrument Serif', Georgia, serif;
+}
+
+/* ============================================================
+   14) CINEMATIC UTILITIES — marquee, cursor, transitions, particles
+   ============================================================ */
+
+/* Marquee (infinite ticker) */
+.lg-marquee {
+  position: relative;
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.lg-marquee__track {
+  display: flex;
+  gap: 3rem;
+  width: max-content;
+  animation: lg-marquee 38s linear infinite;
+}
+
+.lg-marquee:hover .lg-marquee__track {
+  animation-play-state: paused;
+}
+
+.lg-marquee--reverse .lg-marquee__track {
+  animation-direction: reverse;
+}
+
+@keyframes lg-marquee {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+/* Custom cursor — white dot + trailing ring */
+.lg-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 2147483646;
+  will-change: transform;
+  opacity: 0;
+}
+
+.lg-cursor__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.45);
+  transition:
+    width 0.22s var(--ease-out-cinema),
+    height 0.22s var(--ease-out-cinema),
+    opacity 0.22s;
+}
+
+.lg-cursor.is-pointer .lg-cursor__dot {
+  width: 8px;
+  height: 8px;
+}
+
+.lg-cursor.is-active .lg-cursor__dot {
+  width: 4px;
+  height: 4px;
+  opacity: 0.85;
+}
+
+.lg-cursor__ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 2147483645;
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  background: transparent;
+  opacity: 0;
+  will-change: transform;
+  transition:
+    width 0.35s var(--ease-out-cinema),
+    height 0.35s var(--ease-out-cinema),
+    border-color 0.25s,
+    opacity 0.25s;
+}
+
+.lg-cursor__ring.is-pointer {
+  width: 72px;
+  height: 72px;
+  border-color: rgba(255, 255, 255, 0.95);
+  opacity: 1;
+}
+
+@media (pointer: coarse) {
+  .lg-cursor,
+  .lg-cursor__ring {
+    display: none !important;
+  }
+}
+
+html.has-custom-cursor,
+html.has-custom-cursor body,
+html.has-custom-cursor *:not(input):not(textarea):not(select):not([contenteditable='true']) {
+  cursor: none !important;
+}
+
+html.has-custom-cursor input,
+html.has-custom-cursor textarea,
+html.has-custom-cursor select,
+html.has-custom-cursor [contenteditable='true'] {
+  cursor: text !important;
+}
+
+/* Page transitions */
+.lg-page-enter {
+  opacity: 0;
+  transform: translateY(20px) scale(0.995);
+}
+
+.lg-page-enter-active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition:
+    opacity 700ms var(--ease-out-luxe),
+    transform 700ms var(--ease-out-luxe);
+}
+
+/* Floating chip */
+.lg-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border: 1px solid var(--lg-border-strong);
+  background: var(--lg-bg);
+  backdrop-filter: blur(14px) saturate(1.4);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  box-shadow: var(--lg-shadow);
+  color: var(--foreground);
+}
+
+.lg-chip--gold {
+  border-color: rgba(240, 198, 116, 0.45);
+  background: rgba(240, 198, 116, 0.08);
+  color: #fcd99a;
+}
+
+.lg-chip--electric {
+  border-color: rgba(59, 130, 246, 0.45);
+  background: rgba(59, 130, 246, 0.08);
+  color: #93c5fd;
+}
+
+.lg-chip--neon {
+  border-color: rgba(168, 85, 247, 0.45);
+  background: rgba(168, 85, 247, 0.08);
+  color: #d8b4fe;
+}
+
+.lg-chip--success {
+  border-color: rgba(52, 211, 153, 0.45);
+  background: rgba(52, 211, 153, 0.08);
+  color: #6ee7b7;
+}
+
+.lg-chip--danger {
+  border-color: rgba(244, 63, 94, 0.45);
+  background: rgba(244, 63, 94, 0.08);
+  color: #fda4af;
+}
+
+/* Particle helper (positioned via top/left/transform inline) */
+.lg-particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.35);
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+@keyframes lg-particle-rise {
+  0% { transform: translate3d(0, 0, 0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 0.5; }
+  100% { transform: translate3d(var(--lg-px, 0), -120vh, 0); opacity: 0; }
+}
+
+/* Animated noise (subtle film grain) */
+.lg-film-grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  mix-blend-mode: overlay;
+  opacity: 0.06;
+  pointer-events: none;
+  animation: lg-grain 0.4s steps(3) infinite;
+}
+
+@keyframes lg-grain {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-1%, 1%); }
+  50% { transform: translate(1%, -1%); }
+  75% { transform: translate(-1%, -1%); }
+}
+
+/* Sheen sweep */
+.lg-sheen {
+  position: relative;
+  overflow: hidden;
+}
+
+.lg-sheen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.22) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.9s var(--ease-out-luxe);
+  pointer-events: none;
+}
+
+.lg-sheen:hover::before {
+  transform: translateX(100%);
+}
+
+/* Float animation */
+@keyframes lg-float-y {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -10px, 0); }
+}
+
+.lg-float {
+  animation: lg-float-y 6s var(--ease-in-out-cinema) infinite;
+}
+
+/* === Stage props — INK-Games-style themed 3D-feel objects ===
+   Each prop floats gently, tilts slightly to mimic a hanging diorama
+   piece, and brightens its drop-shadow on hover. The animation is
+   transform-only (compositor cheap) and never runs JS per-frame. */
+@keyframes lg-stage-float {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(-1deg);
+  }
+  50% {
+    transform: translate3d(0, -14px, 0) rotate(1deg);
+  }
+}
+
+.lg-stage-prop {
+  display: block;
+  animation: lg-stage-float 7.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  filter: drop-shadow(0 22px 28px rgba(8, 9, 18, 0.35));
+  transition: filter 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.light .lg-stage-prop {
+  /* Soft light-mode shadow — less contrast against the aurora wash */
+  filter: drop-shadow(0 18px 24px rgba(60, 50, 80, 0.22));
+}
+
+.lg-stage-prop:hover {
+  filter: drop-shadow(0 28px 36px rgba(168, 85, 247, 0.55));
+}
+
+/* The little chip under each prop — centered horizontally to the SVG */
+.lg-stage-prop__label {
+  display: inline-flex;
+  margin-top: 0.5rem;
+  white-space: nowrap;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Reduced motion — freeze the float, keep the diorama static */
+@media (prefers-reduced-motion: reduce) {
+  .lg-stage-prop {
+    animation: none;
+  }
+}
+
+/* Glow pulse */
+@keyframes lg-glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.4); }
+  50% { box-shadow: 0 0 0 12px rgba(168, 85, 247, 0); }
+}
+
+.lg-glow-pulse {
+  animation: lg-glow-pulse 2.4s var(--ease-in-out-cinema) infinite;
+}
+
+/* Premium luxe card variant — gold edge */
+.lg-card--luxe::after {
+  background: linear-gradient(135deg, rgba(240, 198, 116, 0.75), rgba(168, 85, 247, 0.5) 50%, rgba(59, 130, 246, 0.55));
+}
+
+.lg-card--luxe:hover {
+  box-shadow: var(--lg-shadow-luxe);
+}
+
+/* Section base */
+.lg-section {
+  position: relative;
+  padding-top: clamp(64px, 9vw, 140px);
+  padding-bottom: clamp(64px, 9vw, 140px);
+}
+
+.lg-section--tight {
+  padding-top: clamp(40px, 6vw, 80px);
+  padding-bottom: clamp(40px, 6vw, 80px);
+}
+
+/* ============================================================
+   15) PRINT — keep readable
+   ============================================================ */
+
+@media print {
+  .lg-backdrop,
+  body::before {
+    display: none !important;
+  }
+}
+
+/* ============================================================
+   16) i18n — RTL + Arabic typography
+   The LanguageProvider sets:
+     <html lang="ar" dir="rtl" class="lg-rtl">
+   for Arabic and the inverse for English. We use that to:
+   - Swap the body font to an Arabic-optimized stack
+   - Loosen letter-spacing (Arabic doesn't track like Latin)
+   - Mirror a couple of explicitly directional ornaments
+   ============================================================ */
+
+html[dir='rtl'],
+html.lg-rtl {
+  font-family:
+    'Cairo',
+    'Tajawal',
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+}
+
+html[dir='rtl'] body,
+html.lg-rtl body {
+  font-family: inherit;
+}
+
+/* Arabic glyphs don't benefit from Latin-style negative tracking; reset it
+   on the hero + heading scales so the script breathes naturally. */
+html[dir='rtl'] .display-hero,
+html.lg-rtl .display-hero,
+html[dir='rtl'] h1,
+html[dir='rtl'] h2,
+html[dir='rtl'] h3,
+html.lg-rtl h1,
+html.lg-rtl h2,
+html.lg-rtl h3 {
+  letter-spacing: 0 !important;
+}
+
+/* Italic serif accents look wrong in Arabic; render upright. */
+html[dir='rtl'] .font-serif,
+html.lg-rtl .font-serif {
+  font-style: normal;
+  font-family:
+    'Cairo',
+    'Tajawal',
+    'Instrument Serif',
+    serif;
+}
+
+/* Uppercase pills lose meaning in Arabic — let the natural script show. */
+html[dir='rtl'] .uppercase,
+html.lg-rtl .uppercase {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* Lucide chevron / arrow icons are visually directional. Mirror the common
+   horizontal ones in RTL so they keep pointing "forward". */
+html[dir='rtl'] [data-lucide='chevron-right'],
+html[dir='rtl'] [data-lucide='chevron-left'],
+html[dir='rtl'] [data-lucide='arrow-right'],
+html[dir='rtl'] [data-lucide='arrow-left'],
+html[dir='rtl'] .lg-arrow-flip,
+html.lg-rtl [data-lucide='chevron-right'],
+html.lg-rtl [data-lucide='chevron-left'],
+html.lg-rtl [data-lucide='arrow-right'],
+html.lg-rtl [data-lucide='arrow-left'],
+html.lg-rtl .lg-arrow-flip {
+  transform: scaleX(-1);
+}
+
+/* Marquee runs right-to-left by default for English; keep that direction
+   visually consistent in Arabic by flipping it back to LTR via transform. */
+html[dir='rtl'] .lg-marquee__track,
+html.lg-rtl .lg-marquee__track {
+  direction: ltr;
+}
+
+/* Language toggle: never let the AR / EN labels wrap. */
+.lg-lang-toggle {
+  white-space: nowrap;
+}
+
+/* Some absolutely-positioned chrome we anchor with left:/right: should
+   stay visually on the same side regardless of language. RTL flips the
+   stage props naturally because they live in a `dir`-aware container,
+   so no override is needed there. */
+
+/* ============================================================
+   Global loading — API / navigation feedback
+   ============================================================ */
+
+@keyframes flowtic-loading-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+.flowtic-global-loading-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 10000;
+  overflow: hidden;
+  pointer-events: none;
+  background: rgba(99, 102, 241, 0.15);
+}
+
+.flowtic-global-loading-bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 45%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(139, 92, 246, 0.95),
+    rgba(99, 102, 241, 0.95),
+    transparent
+  );
+  animation: flowtic-loading-shimmer 1.1s ease-in-out infinite;
+}
+
+.flowtic-global-loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(6, 7, 13, 0.42);
+  backdrop-filter: blur(6px) saturate(1.2);
+  -webkit-backdrop-filter: blur(6px) saturate(1.2);
+  pointer-events: auto;
+}
+
+.light .flowtic-global-loading-overlay {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.flowtic-global-loading-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: 18rem;
+  padding: 1.5rem 1.75rem;
+  text-align: center;
+  border-radius: var(--radius);
+  border: 1px solid var(--lg-border-strong);
+  background: rgba(10, 12, 28, 0.88);
+  box-shadow: var(--lg-shadow);
+  backdrop-filter: blur(20px) saturate(1.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+}
+
+.light .flowtic-global-loading-card {
+  background: rgba(255, 255, 255, 0.92);
+}
+
+/* ── Admin dashboard shell (reference layout + FlowTic theme) ── */
+.admin-sidebar {
+  position: sticky;
+  top: 0;
+  min-height: 100vh;
+  background: var(--sidebar);
+  backdrop-filter: blur(var(--lg-blur-heavy)) saturate(var(--lg-saturate));
+  -webkit-backdrop-filter: blur(var(--lg-blur-heavy)) saturate(var(--lg-saturate));
+  border-right: 1px solid var(--sidebar-border);
+  box-shadow: 12px 0 40px -28px rgba(99, 102, 241, 0.35);
+}
+
+.admin-sidebar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 120% 40% at 0% 0%, rgba(99, 102, 241, 0.14), transparent 55%),
+    radial-gradient(ellipse 80% 35% at 100% 100%, rgba(139, 92, 246, 0.1), transparent 50%);
+}
+
+.light .admin-sidebar {
+  background: var(--sidebar);
+  border-right-color: var(--sidebar-border);
+  box-shadow:
+    1px 0 0 0 rgba(255, 255, 255, 0.95) inset,
+    12px 0 40px -28px rgba(99, 102, 241, 0.16);
+}
+
+.light .admin-sidebar::before {
+  background:
+    radial-gradient(ellipse 120% 40% at 0% 0%, rgba(99, 102, 241, 0.1), transparent 55%),
+    radial-gradient(ellipse 80% 35% at 100% 100%, rgba(139, 92, 246, 0.08), transparent 50%);
+}
+
+.light .admin-sidebar__link--active {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.14), rgba(139, 92, 246, 0.1));
+  color: #4338ca;
+  border-color: rgba(99, 102, 241, 0.28);
+}
+
+.light .admin-sidebar__link--active .admin-sidebar__dot {
+  background: #6366f1;
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.45);
+}
+
+.light .admin-sidebar__logo {
+  box-shadow: 0 8px 22px -8px rgba(99, 102, 241, 0.35);
+}
+
+.admin-sidebar__brand {
+  position: relative;
+  z-index: 1;
+}
+
+.admin-sidebar__logo {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  box-shadow: 0 8px 22px -8px rgba(99, 102, 241, 0.55);
+}
+
+.admin-sidebar__nav {
+  position: relative;
+  z-index: 1;
+}
+
+.admin-sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.72rem 0.85rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.admin-sidebar__link:hover {
+  background: var(--sidebar-accent);
+  color: var(--sidebar-foreground);
+}
+
+.admin-sidebar__link--active {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.22), rgba(139, 92, 246, 0.18));
+  color: var(--sidebar-foreground);
+  border-color: rgba(99, 102, 241, 0.35);
+}
+
+.admin-sidebar__dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+.admin-sidebar__link--active .admin-sidebar__dot {
+  background: var(--primary);
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.65);
+}
+
+.admin-sidebar__footer-link {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border-radius: 0.9rem;
+  font-size: 0.82rem;
+  color: var(--muted-foreground);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.admin-sidebar__footer-link:hover {
+  background: var(--sidebar-accent);
+  color: var(--sidebar-foreground);
+}
+
+.admin-topbar__inner {
+  background: rgba(8, 10, 24, 0.72);
+  backdrop-filter: blur(18px) saturate(1.6);
+  -webkit-backdrop-filter: blur(18px) saturate(1.6);
+  border: 1px solid var(--lg-border-strong);
+  box-shadow: var(--lg-shadow);
+}
+
+.light .admin-topbar__inner {
+  background: rgba(255, 255, 255, 0.88);
+  border-color: var(--lg-border-strong);
+}
+
+.light .admin-user-chip {
+  border-color: var(--lg-border);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.light .admin-icon-btn {
+  border-color: var(--lg-border);
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--foreground);
+}
+
+.light .admin-mobile-nav__pill {
+  border-color: var(--lg-border);
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--muted-foreground);
+}
+
+.light .admin-mobile-nav__pill--active {
+  color: #fff;
+  border-color: rgba(99, 102, 241, 0.45);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.88), rgba(139, 92, 246, 0.82));
+}
+
+.light .admin-drawer__backdrop {
+  background: rgba(10, 12, 31, 0.28);
+}
+
+.light .admin-drawer__panel {
+  background: var(--sidebar);
+  border-right-color: var(--sidebar-border);
+  box-shadow: 20px 0 50px rgba(10, 12, 31, 0.12);
+}
+
+.admin-user-chip {
+  border: 1px solid var(--lg-border);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.admin-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 0.85rem;
+  border: 1px solid var(--lg-border);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.admin-mobile-nav__list {
+  min-width: max-content;
+}
+
+.admin-mobile-nav__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  white-space: nowrap;
+  border: 1px solid var(--lg-border);
+  background: rgba(8, 10, 24, 0.55);
+  color: var(--muted-foreground);
+}
+
+.admin-mobile-nav__pill--active {
+  color: #fff;
+  border-color: rgba(139, 92, 246, 0.55);
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.55), rgba(139, 92, 246, 0.45));
+}
+
+.admin-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+}
+
+.admin-drawer__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 7, 13, 0.55);
+  backdrop-filter: blur(4px);
+}
+
+.admin-drawer__panel {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: min(18rem, 88vw);
+  background: var(--sidebar);
+  border-right: 1px solid var(--sidebar-border);
+  box-shadow: 20px 0 50px rgba(0, 0, 0, 0.35);
+}
+
+.admin-panel.lg-card:hover {
+  transform: none;
+}
+
+.admin-stat-card.lg-card:hover {
+  transform: translateY(-3px);
+}
+
+.admin-stat-card__value--rose {
+  background: linear-gradient(135deg, #fb7185, #f43f5e);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.admin-stat-card__value--violet {
+  background: linear-gradient(135deg, #c4b5fd, #8b5cf6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.admin-stat-card__value--sky {
+  background: linear-gradient(135deg, #7dd3fc, #38bdf8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.admin-stat-card__value--amber {
+  background: linear-gradient(135deg, #fcd34d, #f59e0b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.admin-list-row {
+  background: rgba(148, 163, 184, 0.08);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.light .admin-list-row {
+  background: rgba(99, 102, 241, 0.05);
+  border-color: rgba(99, 102, 241, 0.12);
+}
+
+.light .admin-ambient > div:first-child {
+  opacity: 0.45;
+}
+
+.light .admin-ambient > div:last-child {
+  opacity: 0.5;
+}
+

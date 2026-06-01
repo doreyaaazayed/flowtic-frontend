@@ -1,0 +1,7 @@
+/**
+ * Root stack above fixed R3F cosmic canvas (CosmicCanvas).
+ */
+
+html.lenis.lenis-smooth {
+  overscroll-behavior: none;
+}

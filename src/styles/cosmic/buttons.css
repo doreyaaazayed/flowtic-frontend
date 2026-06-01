@@ -1,0 +1,130 @@
+/* Dark Cosmos buttons — scoped to cosmic shell */
+
+.cosmic-shell .btn-plasma {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--size-small);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--star-white);
+  background: var(--grad-plasma);
+  border: none;
+  padding: 14px 32px;
+  border-radius: var(--r-full);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(255, 60, 172, 0.35);
+  transition:
+    transform var(--dur-fast) var(--ease-out-back),
+    box-shadow var(--dur-fast);
+}
+
+.cosmic-shell .btn-plasma::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(255, 255, 255, 0.2), transparent);
+  opacity: 0;
+  transition: opacity var(--dur-fast);
+}
+
+.cosmic-shell .btn-plasma:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 40px rgba(255, 60, 172, 0.55), var(--glow-plasma);
+}
+
+.cosmic-shell .btn-plasma:hover::before {
+  opacity: 1;
+}
+
+.cosmic-shell .btn-plasma:active {
+  transform: scale(0.97);
+  transition-duration: var(--dur-instant);
+}
+
+.cosmic-shell .btn-ghost {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: var(--size-small);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--star-white);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  padding: 13px 30px;
+  border-radius: var(--r-full);
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  transition: all var(--dur-fast) var(--ease-out-expo);
+}
+
+.cosmic-shell .btn-ghost:hover {
+  background: var(--glass-bg-hover);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.cosmic-shell .btn-icon {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--star-dim);
+  transition: all var(--dur-fast);
+}
+
+.cosmic-shell .btn-icon:hover {
+  background: var(--glass-bg-hover);
+  color: var(--star-white);
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: scale(1.06);
+}
+
+@keyframes cosmic-gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes cosmic-pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 8px currentColor;
+  }
+  50% {
+    opacity: 0.55;
+    box-shadow: 0 0 16px currentColor;
+  }
+}
+
+@keyframes cosmic-scroll-hint {
+  0% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scaleY(0.65);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+.cosmic-shell .cosmic-grad-animate {
+  background-size: 200% auto;
+}

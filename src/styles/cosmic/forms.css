@@ -1,0 +1,111 @@
+.cosmic-shell .input-cosmic {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--r-md);
+  padding-block: 0.75rem;
+  padding-inline: 1rem;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--star-white);
+  outline: none;
+  transition:
+    border-color var(--dur-fast),
+    box-shadow var(--dur-fast),
+    background var(--dur-fast);
+  caret-color: var(--plasma);
+}
+
+.cosmic-shell .input-cosmic::placeholder {
+  color: var(--star-mute);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+
+.cosmic-shell .input-cosmic:focus {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 60, 172, 0.55);
+  box-shadow:
+    0 0 0 3px rgba(255, 60, 172, 0.08),
+    0 0 20px rgba(255, 60, 172, 0.1);
+}
+
+.cosmic-shell .input-cosmic:hover:not(:focus) {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.cosmic-shell .form-label-cosmic {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--star-mute);
+  margin-bottom: var(--space-2);
+}
+
+.cosmic-shell .input-wrapper-cosmic {
+  position: relative;
+}
+
+.cosmic-shell .input-wrapper-cosmic::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: calc(var(--r-md) + 1px);
+  background: var(--grad-plasma);
+  opacity: 0;
+  z-index: -1;
+  transition: opacity var(--dur-fast);
+  pointer-events: none;
+}
+
+.cosmic-shell .input-wrapper-cosmic:focus-within::after {
+  opacity: 0.45;
+}
+
+.cosmic-shell .input-cosmic.input-has-leading-icon {
+  padding-inline-start: 2.875rem !important;
+}
+
+.cosmic-shell .input-cosmic.input-has-trailing-icon {
+  padding-inline-end: 2.875rem !important;
+}
+
+.cosmic-shell [data-slot='input-otp-slot'] {
+  border-radius: var(--r-sm) !important;
+  border-color: var(--glass-border) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  font-family: var(--font-mono);
+  font-size: 1.125rem;
+}
+
+.cosmic-shell [data-slot='input-otp-slot'][data-active='true'] {
+  border-color: rgba(255, 60, 172, 0.55) !important;
+  box-shadow:
+    0 0 0 3px rgba(255, 60, 172, 0.12),
+    0 0 20px rgba(255, 60, 172, 0.12) !important;
+}
+
+.cosmic-shell .cosmic-dob-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--star-white);
+  text-align: left;
+  transition:
+    border-color var(--dur-fast),
+    background var(--dur-fast);
+}
+
+.cosmic-shell .cosmic-dob-trigger:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.14);
+}

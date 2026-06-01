@@ -1,0 +1,230 @@
+/* Saved cards wallet — scoped card chrome; layout uses Tailwind + design tokens */
+
+.ft-saved-cards-scope .sc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: 1.25rem;
+}
+
+.ft-saved-cards-scope .sc-card {
+  position: relative;
+  border-radius: var(--radius);
+  padding: 1.25rem 1.25rem 1rem;
+  min-height: 11.5rem;
+  color: #fff;
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--primary) 28%, transparent);
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, #fff 22%, transparent);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.ft-saved-cards-scope .sc-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 40px color-mix(in srgb, var(--primary) 35%, transparent);
+}
+
+.ft-saved-cards-scope .sc-card--0 {
+  background: linear-gradient(135deg, #4338ca 0%, var(--primary) 45%, var(--secondary) 100%);
+}
+
+.ft-saved-cards-scope .sc-card--1 {
+  background: linear-gradient(135deg, #0f766e 0%, var(--accent) 50%, #67e8f9 100%);
+}
+
+.ft-saved-cards-scope .sc-card--2 {
+  background: linear-gradient(135deg, #7c3aed 0%, var(--secondary) 48%, #c4b5fd 100%);
+}
+
+.ft-saved-cards-scope .sc-card--3 {
+  background: linear-gradient(135deg, #1e1b4b 0%, var(--primary) 55%, var(--accent) 100%);
+}
+
+.ft-saved-cards-scope .sc-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.ft-saved-cards-scope .sc-card-chip {
+  width: 2.5rem;
+  height: 2rem;
+  border-radius: 0.4rem;
+  background: linear-gradient(135deg, #fde68a 0%, #d97706 55%, #b45309 100%);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.45);
+  flex-shrink: 0;
+}
+
+.ft-saved-cards-scope .sc-card-bank {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.92;
+  text-align: right;
+  line-height: 1.25;
+  max-width: 7.5rem;
+}
+
+.ft-saved-cards-scope .sc-card-pan {
+  font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  margin-bottom: auto;
+  padding-bottom: 1rem;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+.ft-saved-cards-scope .sc-card-bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.ft-saved-cards-scope .sc-card-holder {
+  min-width: 0;
+}
+
+.ft-saved-cards-scope .sc-card-name {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.95;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ft-saved-cards-scope .sc-card-exp-line {
+  font-size: 0.7rem;
+  margin-top: 0.3rem;
+  opacity: 0.88;
+  font-weight: 600;
+}
+
+.ft-saved-cards-scope .sc-card-network {
+  flex-shrink: 0;
+}
+
+.ft-saved-cards-scope .sc-net-row {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.ft-saved-cards-scope .sc-net-visa {
+  font-size: 0.62rem;
+  font-weight: 900;
+  font-style: italic;
+  opacity: 0.55;
+  color: #fff;
+}
+
+.ft-saved-cards-scope .sc-net-visa.sc-net--on {
+  opacity: 1;
+}
+
+.ft-saved-cards-scope .sc-net-mc {
+  display: flex;
+  gap: 3px;
+  opacity: 0.55;
+}
+
+.ft-saved-cards-scope .sc-net-mc.sc-net--on {
+  opacity: 1;
+}
+
+.ft-saved-cards-scope .sc-net-mc span {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+}
+
+.ft-saved-cards-scope .sc-net-mc span:first-child {
+  background: #eb001b;
+}
+
+.ft-saved-cards-scope .sc-net-mc span:last-child {
+  background: #f79e1b;
+  margin-left: -8px;
+}
+
+.ft-saved-cards-scope .sc-net-meeza {
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  opacity: 0.55;
+  color: #fff;
+}
+
+.ft-saved-cards-scope .sc-net-meeza.sc-net--on {
+  opacity: 1;
+}
+
+.ft-saved-cards-scope .sc-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.875rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.ft-saved-cards-scope .sc-card-actions button {
+  flex: 1;
+  min-width: 0;
+  padding: 0.5rem 0.5rem;
+  border-radius: calc(var(--radius) - 4px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.12);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+.ft-saved-cards-scope .sc-card-actions button:hover {
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.ft-saved-cards-scope .sc-card-actions .sc-use {
+  flex: 1.2;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--foreground);
+  border-color: transparent;
+}
+
+.ft-saved-cards-scope .sc-card-actions .sc-use:hover {
+  background: #fff;
+}
+
+.ft-saved-cards-scope .sc-card-actions .sc-icon-del {
+  flex: 0 0 2.75rem;
+  min-width: 2.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+@media (max-width: 640px) {
+  .ft-saved-cards-scope .sc-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .ft-saved-cards-scope .sc-card-actions {
+    flex-direction: row;
+  }
+
+  .ft-saved-cards-scope .sc-card-actions .sc-use {
+    flex: 1;
+  }
+}

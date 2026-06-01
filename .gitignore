@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Logs & debug
+*.log
+npm-debug.log*
+pnpm-debug.log*
+logs/
+
+# OS & editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Vite / caches
+.vite/
+.cache/
+
+# Uploaded event images (generated at runtime)
+backend/uploads/
+
+# Test coverage
+coverage/
+
+# Optional: local Cursor/IDE (uncomment if you do not want these in the repo)
+# .cursor/
